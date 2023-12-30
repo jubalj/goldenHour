@@ -1,86 +1,40 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client"
+import { useState, useEffect } from 'react';
+import styles from './page.module.css'; // assuming styles is defined in this file
+import TimeCounter from './TimeCounter.js'; // adjust the path as needed
 
 export default function Home() {
+  const [inputDateTime, setInputDateTime] = useState('');
+
+  // Function to format the date in local timezone and in the expected format
+  const toLocalISOString = (date) => {
+    const tzOffset = date.getTimezoneOffset() * 60000; // offset in milliseconds
+    const localISOTime = (new Date(date - tzOffset)).toISOString().slice(0, -1);
+    return localISOTime.substring(0, 16);
+  };
+
+  // Set initial date and time on component mount
+  useEffect(() => {
+    const now = new Date();
+    const localDateTimeString = toLocalISOString(now);
+    setInputDateTime(localDateTimeString);
+  }, []);
+
   return (
     <main className={styles.main}>
       <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <span>+</span>
-        <Image
-          src="/amplify.svg"
-          alt="Amplify Logo"
-          width={45}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://docs.amplify.aws/gen2/"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Review documentation for Amplify's code-first DX (Gen 2).</p>
-        </a>
-
-        <a
-          href="https://docs.amplify.aws/gen2/start/quickstart/"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Quickstart <span>-&gt;</span>
-          </h2>
-          <p>Follow a tutorial to build a fullstack app with Amplify Gen 2.</p>
-        </a>
-
-        <a
-          href="https://docs.amplify.aws/gen2/build-a-backend/auth/set-up-auth/"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Auth <span>-&gt;</span>
-          </h2>
-          <p>Zero-config Auth UI components with social sign-in and MFA.</p>
-        </a>
-
-        <a
-          href="https://docs.amplify.aws/gen2/build-a-backend/data/set-up-data/"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Data <span>-&gt;</span>
-          </h2>
-          <p>
-            Fully-typed real-time API with NoSQL database.
+        <div className="w-1/2 mt-32 mx-auto bg-blue-900 p-10">
+          <p className="m-4 text-gray-200">
+            <input 
+              type="datetime-local" 
+              value={inputDateTime} 
+              onChange={(e) => setInputDateTime(e.target.value)} 
+              className="mt-2 p-2 border rounded-md" 
+            />
           </p>
-        </a>
+          <TimeCounter dateTimeString={inputDateTime + ':00'} />
+        </div>
       </div>
     </main>
-  )
+  );
 }
